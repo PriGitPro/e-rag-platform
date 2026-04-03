@@ -25,5 +25,12 @@ class Config:
     embedding_dims: int = 1536
     embed_batch_size: int = 32
 
+    # LLM provider — "openai" or "ollama"
+    # Switch by setting LLM_PROVIDER=ollama + LLM_MODEL=llama3.2 in your env file.
+    # Everything else (generate / stream interface) stays the same.
+    llm_provider: str = field(default_factory=lambda: os.getenv("LLM_PROVIDER", "openai"))
+    llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "gpt-4o"))
+    ollama_base_url: str = field(default_factory=lambda: os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"))
+
 
 config = Config()

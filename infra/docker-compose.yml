@@ -77,6 +77,29 @@ services:
       redis:
         condition: service_healthy
 
+  # ── Local LLM (opt-in) ────────────────────────────────────────────────────
+  # Start with:  docker compose --profile ollama up
+  # Pull model:  docker exec erp-ollama ollama pull llama3.2
+  # Then set in .env.local:  LLM_PROVIDER=ollama  LLM_MODEL=llama3.2
+  ollama:
+    profiles: [ollama]
+    image: ollama/ollama:latest
+    container_name: erp-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # Uncomment for NVIDIA GPU passthrough:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+  # ──────────────────────────────────────────────────────────────────────────
+
   milvus-etcd:
     image: quay.io/coreos/etcd:v3.5.5
     container_name: erp-milvus-etcd
@@ -114,3 +137,4 @@ services:
 
 volumes:
   postgres_data:
+  ollama_data:
