@@ -1,4 +1,4 @@
-# RFC-001 · Architecture
+
 # Enterprise RAG Platform with Built-in AI Governance
 
 > A production-grade knowledge platform with governed hybrid execution: a deterministic RAG pipeline for single-intent queries, with agentic escalation for complex multi-step queries — both paths enforcing three-intercept governance, an immutable audit trail, and RAGAS-gated retrieval quality.
