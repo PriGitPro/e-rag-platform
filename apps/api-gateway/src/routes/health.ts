@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import pg from "pg";
-import Redis from "ioredis";
+import { Redis } from "ioredis";
 import { getEnv } from "../config/env.js";
 
 const { Pool } = pg;

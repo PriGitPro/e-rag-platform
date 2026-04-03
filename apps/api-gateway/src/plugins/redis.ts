@@ -1,5 +1,5 @@
 import fp from "fastify-plugin";
-import Redis from "ioredis";
+import { Redis } from "ioredis";
 import type { FastifyInstance } from "fastify";
 import type { AppEnv } from "../config/env.js";
 
