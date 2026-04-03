@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireAuth } from "../middleware/auth.js";
 import { requireRoles } from "../middleware/rbac.js";
 import { enforceTokenBudget } from "../middleware/tokenBudget.js";
+import { resolveRateLimitKey } from "../plugins/rateLimitKey.js";
 
 const querySchema = z.object({
   query: z.string().min(1),
@@ -18,7 +19,7 @@ export async function queryRoutes(app: FastifyInstance): Promise<void> {
         rateLimit: {
           max: 10,
           timeWindow: "1 minute",
-          keyGenerator: (request) => request.headers.authorization ?? request.ip
+          keyGenerator: (request) => resolveRateLimitKey(app, request)
         }
       }
     },
