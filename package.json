@@ -8,14 +8,13 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run -w @erp/api-gateway build && npm run -w @erp/ingestion-worker build && npm run -w @erp/web build",
+    "build": "npm run -w @erp/api-gateway build && npm run -w @erp/web build",
     "build:web": "npm run -w @erp/web build",
     "dev:gateway": "npm run -w @erp/api-gateway dev",
-    "dev:worker": "npm run -w @erp/ingestion-worker dev",
     "dev:web": "npm run -w @erp/web dev",
     "test": "npm run -w @erp/api-gateway test",
-    "lint": "npm run -w @erp/api-gateway lint && npm run -w @erp/ingestion-worker typecheck",
-    "typecheck": "npm run -w @erp/api-gateway typecheck && npm run -w @erp/ingestion-worker typecheck"
+    "lint": "npm run -w @erp/api-gateway lint",
+    "typecheck": "npm run -w @erp/api-gateway typecheck"
   },
   "engines": {
     "node": ">=20.0.0"

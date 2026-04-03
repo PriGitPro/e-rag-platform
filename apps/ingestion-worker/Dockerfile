@@ -1,24 +1,18 @@
-FROM node:20-alpine AS builder
+FROM python:3.12-slim
+
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-COPY tsconfig.base.json ./
-COPY apps/ingestion-worker/package.json ./apps/ingestion-worker/
+# System deps: gcc for psycopg2 compilation, libpq-dev for pg client headers
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN npm ci --workspace=@erp/ingestion-worker
+COPY apps/ingestion-worker/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY apps/ingestion-worker/ ./apps/ingestion-worker/
+COPY apps/ingestion-worker/src/ ./src/
 
-RUN npm run -w @erp/ingestion-worker build
-
-FROM node:20-alpine AS runtime
-WORKDIR /app
-
-COPY package.json package-lock.json* ./
-COPY apps/ingestion-worker/package.json ./apps/ingestion-worker/
-
-RUN npm ci --workspace=@erp/ingestion-worker --omit=dev
-
-COPY --from=builder /app/apps/ingestion-worker/dist ./apps/ingestion-worker/dist
-
-CMD ["node", "apps/ingestion-worker/dist/worker.js"]
+WORKDIR /app/src
+ENV PYTHONUNBUFFERED=1
+CMD ["python", "-u", "worker.py"]
