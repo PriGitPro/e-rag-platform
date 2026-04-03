@@ -56,3 +56,15 @@ def save_chunks(conn, document_id: str, tenant_id: str, chunks: list[dict]) -> N
             ],
         )
     conn.commit()
+
+
+def fetch_chunks_by_ids(conn, chunk_ids: list[str]) -> dict[str, str]:
+    """Return {chunk_id: content} for the given IDs. Missing IDs are omitted."""
+    if not chunk_ids:
+        return {}
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT id, content FROM chunks WHERE id = ANY(%s)",
+            (chunk_ids,),
+        )
+        return {row[0]: row[1] for row in cur.fetchall()}

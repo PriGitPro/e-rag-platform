@@ -77,6 +77,35 @@ services:
       redis:
         condition: service_healthy
 
+  query-service:
+    build:
+      context: ..
+      dockerfile: apps/ingestion-worker/Dockerfile
+    container_name: erp-query-service
+    restart: unless-stopped
+    command: ["python", "-u", "query_server.py"]
+    env_file: ../.env.local
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    container_name: erp-web
+    restart: unless-stopped
+    environment:
+      VITE_API_TARGET: http://api-gateway:3000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api-gateway
+
   # ── Local LLM (opt-in) ────────────────────────────────────────────────────
   # Start with:  docker compose --profile ollama up
   # Pull model:  docker exec erp-ollama ollama pull llama3.2

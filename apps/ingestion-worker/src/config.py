@@ -25,6 +25,10 @@ class Config:
     embedding_dims: int = 1536
     embed_batch_size: int = 32
 
+    # Reranker
+    reranker_enabled: bool = field(default_factory=lambda: os.getenv("RERANKER_ENABLED", "true").lower() == "true")
+    reranker_model: str = field(default_factory=lambda: os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"))
+
     # LLM provider — "openai" or "ollama"
     # Switch by setting LLM_PROVIDER=ollama + LLM_MODEL=llama3.2 in your env file.
     # Everything else (generate / stream interface) stays the same.

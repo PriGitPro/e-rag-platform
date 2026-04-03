@@ -9,7 +9,8 @@ const schema = z.object({
   REDIS_URL: z.string().default("redis://localhost:6379"),
   DEFAULT_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
   DEFAULT_RATE_LIMIT_WINDOW: z.string().default("1 minute"),
-  DEFAULT_TOKEN_BUDGET: z.coerce.number().int().positive().default(4000)
+  DEFAULT_TOKEN_BUDGET: z.coerce.number().int().positive().default(4000),
+  QUERY_SERVICE_URL: z.string().default("http://localhost:8000")
 });
 
 export type AppEnv = z.infer<typeof schema>;
