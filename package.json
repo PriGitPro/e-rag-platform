@@ -1,0 +1,20 @@
+{
+  "name": "enterprise-rag-platform",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Enterprise RAG Platform monorepo",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run -w @erp/api-gateway build",
+    "dev:gateway": "npm run -w @erp/api-gateway dev",
+    "test": "npm run -w @erp/api-gateway test",
+    "lint": "npm run -w @erp/api-gateway lint",
+    "typecheck": "npm run -w @erp/api-gateway typecheck"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
