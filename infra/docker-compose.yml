@@ -13,6 +13,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ../migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U erp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:7-alpine
@@ -20,6 +26,56 @@ services:
     restart: unless-stopped
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio-r2-local:
+    image: minio/minio:RELEASE.2024-02-17T01-15-57Z
+    container_name: erp-minio-r2-local
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: r2local
+      MINIO_ROOT_PASSWORD: r2localpass
+    ports:
+      - "9010:9000"
+      - "9011:9001"
+    command: minio server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-gateway:
+    build:
+      context: ..
+      dockerfile: apps/api-gateway/Dockerfile
+    container_name: erp-api-gateway
+    restart: unless-stopped
+    env_file: ../.env.local
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  ingestion-worker:
+    build:
+      context: ..
+      dockerfile: apps/ingestion-worker/Dockerfile
+    container_name: erp-ingestion-worker
+    restart: unless-stopped
+    env_file: ../.env.local
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   milvus-etcd:
     image: quay.io/coreos/etcd:v3.5.5
@@ -55,17 +111,6 @@ services:
     depends_on:
       - milvus-etcd
       - milvus-minio
-
-  minio-r2-local:
-    image: minio/minio:RELEASE.2024-02-17T01-15-57Z
-    container_name: erp-minio-r2-local
-    environment:
-      MINIO_ROOT_USER: r2local
-      MINIO_ROOT_PASSWORD: r2localpass
-    ports:
-      - "9010:9000"
-      - "9011:9001"
-    command: minio server /data --console-address ":9001"
 
 volumes:
   postgres_data:
