@@ -36,5 +36,24 @@ class Config:
     llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "gpt-4o"))
     ollama_base_url: str = field(default_factory=lambda: os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"))
 
+    # LLM intent classifier (small/fast model — separate from generation model)
+    llm_classifier_model: str = field(default_factory=lambda: os.getenv("LLM_CLASSIFIER_MODEL", "gpt-4o-mini"))
+
+    # MCP tool base URLs — swap to real service URLs in production
+    jira_mcp_base_url: str = field(default_factory=lambda: os.getenv("JIRA_MCP_BASE_URL", "http://localhost:3001"))
+    confluence_mcp_base_url: str = field(default_factory=lambda: os.getenv("CONFLUENCE_MCP_BASE_URL", "http://localhost:3002"))
+
+    # Governance intercepts
+    governance_intercept_enabled: bool = field(default_factory=lambda: os.getenv("GOVERNANCE_INTERCEPT_ENABLED", "true").lower() == "true")
+    sensitive_keywords_extra: list = field(default_factory=lambda: [k.strip() for k in os.getenv("SENSITIVE_KEYWORDS_EXTRA", "").split(",") if k.strip()])
+
+    # JSONL audit trail
+    audit_jsonl_path: str = field(default_factory=lambda: os.getenv("AUDIT_JSONL_PATH", "/tmp/erp_audit.jsonl"))
+    audit_enabled: bool = field(default_factory=lambda: os.getenv("AUDIT_ENABLED", "true").lower() == "true")
+
+    # LLM router thresholds
+    llm_router_token_threshold: int = field(default_factory=lambda: int(os.getenv("LLM_ROUTER_TOKEN_THRESHOLD", "4000")))
+    llm_router_governance_model: str = field(default_factory=lambda: os.getenv("LLM_ROUTER_GOVERNANCE_MODEL", "gpt-4o"))
+
 
 config = Config()

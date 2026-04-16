@@ -92,6 +92,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      milvus-standalone:
+        condition: service_healthy
 
   web:
     build:
@@ -160,6 +162,12 @@ services:
     ports:
       - "19530:19530"
       - "9091:9091"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
     depends_on:
       - milvus-etcd
       - milvus-minio
