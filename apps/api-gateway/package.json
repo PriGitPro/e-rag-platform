@@ -20,7 +20,7 @@
     "fastify-plugin": "^5.0.1",
     "ioredis": "^5.4.2",
     "pg": "^8.13.3",
-    "zod": "^3.24.3"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^22.13.11",
